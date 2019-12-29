@@ -1,8 +1,10 @@
 %global romio_home %{_libdir}/romio
+%global cart_major 4
+%global daos_major 0
 
 Name:       romio
 Version:    3.3
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    ROMIO
 
 License:    MIT
@@ -13,12 +15,14 @@ Patch0:     packaged-runtests.patch
 BuildRequires:  mpich-devel
 # this should be BR:ed by mpich-devel above
 BuildRequires:  daos-devel
+Provides:       %{name}-cart-%{cart_major}-daos-%{daos_major}
 
 %description
 ROMIO
 
 %package tests
 Summary:    ROMIO tests
+Provides:       %{name}-tests-cart-%{cart_major}-daos-%{daos_major}
 
 %description tests
 ROMIO tests
@@ -52,6 +56,9 @@ done
 %license
 
 %changelog
+* Sun Dec 29 2019 Brian J. Murrell <brian.murrell@intel.com> - 3.3-2
+- Add Provides: %{name}-cart-%{cart_major}-daos-%{daos_major}
+
 * Tue Sep 03 2019 Brian J. Murrell <brian.murrell@intel.com> - 3.3-1
 - Initial package
 - Temporarily BR: daos-devel, until mercury-devel R:s it
