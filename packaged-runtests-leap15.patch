@@ -1,0 +1,378 @@
+--- a/test/runtests	2019-12-12 17:06:15.443041123 -0500
++++ b/test/runtests	2019-12-12 16:05:49.079353484 -0500
+@@ -2,6 +2,7 @@
+ prefix=/usr/lib64/mpi/gcc/mpich
+ exec_prefix=/usr/lib64/mpi/gcc/mpich
+ bindir=/usr/lib64/mpi/gcc/mpich/bin
++testsdir=${0%/*}
+ mpirun="${bindir}/mpiexec"
+ STOPFILE=${MPITEST_STOPTEST:-"$HOME/.stopmpichtests"}
+ #
+@@ -25,7 +26,7 @@
+ 	;;
+         -margs=*)
+ 	shift
+-	margs=`echo $arg | sed 's/-margs=//'`
++	margs=$(echo $arg | sed 's/-margs=//')
+ 	args="$args $margs"
+ 	;;
+ 	-echo)
+@@ -52,7 +53,7 @@
+ 	daos_pool=1
+ 	;;
+ 	-fname=*)
+-	FILENAME=`echo $arg|sed 's/-*fname=//'`
++	FILENAME=$(echo $arg|sed 's/-*fname=//')
+ 	;;
+ 	-atend)
+ 	shift
+@@ -89,7 +90,7 @@
+         echo "Found stopfile; exiting"
+         exit 0
+     fi
+-    if [ ! -x $1 ] ; then
++    if [ ! -x $testsdir/$1 ] ; then
+ 	$MAKE $1
+         if [ ! -x $1 ] ; then 
+ 	    echo "Could not build executable $1; aborting tests"
+@@ -107,9 +108,9 @@
+ OutTime() {
+     if [ $quiet = 0 ] ; then
+ 	if [ -z "$hostname" ] ; then
+-	    hostname=`hostname`
++	    hostname=$(hostname)
+ 	fi
+-	d=`date`
++	d=$(date)
+ 	echo "$hostname : $d"
+     fi
+ }
+@@ -156,20 +157,20 @@
+       MakeExe simple
+       rm -rf $FILENAME*
+       echo "**** Testing ${1}.c ****"
+-      mpirun -np 4 ./${1} -fname $FILENAME "$@" >>${1}.out 2>1
++      mpirun -np 4 $testsdir/${1} -fname $FILENAME "$@" >>${1}.out 2>1
+       CheckOutput ${1} 
+       CleanExe ${1}
+ }
+ 
+ # If the programs are not available, run make.
+-if [ ! -x simple -a $makeeach = 0 ] ; then
++if [ ! -x $testsdir/simple -a $makeeach = 0 ] ; then
+     $MAKE default
+ fi
+ #
+ 
+ if [ $daos_pool = 1 ] ; then
+ echo '**** Creating DAOS Pool ****'
+-pool=`dmg_old create --size=1GB`
++pool=$(dmg_old create --size=1GB)
+ value=$pool
+ echo $value
+ OLDIFS=$IFS
+@@ -178,7 +179,7 @@
+ IFS=$OLDIFS
+ export DAOS_POOL=${array[0]}
+ export DAOS_SVCL=${array[1]}
+-export DAOS_CONT=`uuidgen`
++export DAOS_CONT=$(uuidgen)
+ echo '**** Creating DAOS Container ****'
+ daos cont create --pool=$DAOS_POOL --svc=$DAOS_SVCL --cont=$DAOS_CONT --type=POSIX
+ fi
+@@ -193,7 +194,7 @@
+ MakeExe simple
+ \rm -f $FILENAME*
+ echo '**** Testing simple.c ****'
+-$mpirun -np 4 ./simple -fname $FILENAME
++$mpirun -np 4 $testsdir/simple -fname $FILENAME
+ # CheckOutput simple
+ CleanExe simple
+ #
+@@ -203,7 +204,7 @@
+ MakeExe async
+ \rm -f $FILENAME*
+ echo '**** Testing async.c ****'
+-$mpirun -np 4 ./async -fname $FILENAME
++$mpirun -np 4 $testsdir/async -fname $FILENAME
+ # CheckOutput async
+ CleanExe async
+ #
+@@ -213,7 +214,7 @@
+ MakeExe async-multiple
+ \rm -f $FILENAME*
+ echo '**** Testing async-multiple.c ****'
+-$mpirun -np 4 ./async-multiple -fname $FILENAME
++$mpirun -np 4 $testsdir/async-multiple -fname $FILENAME
+ # CheckOutput async-multiple
+ CleanExe async-multiple
+ #
+@@ -226,7 +227,7 @@
+ 	echo '**** Testing atomicity.c ****'
+ 	# Atomicity test recommends at least 8 processes (separate processors 
+ 	# even better)
+-	$mpirun -np 4 ./atomicity -fname $FILENAME
++	$mpirun -np 4 $testsdir/atomicity -fname $FILENAME
+ 	# CheckOutput atomicity
+ 	CleanExe atomicity
+ 	#
+@@ -237,7 +238,7 @@
+ MakeExe coll_test
+ \rm -f $FILENAME*
+ echo '**** Testing coll_test.c ****'
+-$mpirun -np 4 ./coll_test -fname $FILENAME
++$mpirun -np 4 $testsdir/coll_test -fname $FILENAME
+ # CheckOutput coll_test
+ CleanExe coll_test
+ #
+@@ -247,7 +248,7 @@
+ MakeExe excl
+ \rm -f $FILENAME*
+ echo '**** Testing excl.c ****'
+-$mpirun -np 4 ./excl -fname $FILENAME
++$mpirun -np 4 $testsdir/excl -fname $FILENAME
+ # CheckOutput excl
+ CleanExe excl
+ #
+@@ -257,7 +258,7 @@
+ MakeExe file_info
+ \rm -f $FILENAME*
+ echo '**** Testing file_info.c ****'
+-$mpirun -np 4 ./file_info -fname $FILENAME
++$mpirun -np 4 $testsdir/file_info -fname $FILENAME
+ # CheckOutput file_info
+ CleanExe file_info
+ #
+@@ -267,7 +268,7 @@
+ MakeExe i_noncontig
+ \rm -f $FILENAME*
+ echo '**** Testing i_noncontig.c ****'
+-$mpirun -np 2 ./i_noncontig -fname $FILENAME
++$mpirun -np 2 $testsdir/i_noncontig -fname $FILENAME
+ # CheckOutput i_noncontig
+ CleanExe i_noncontig
+ #
+@@ -277,7 +278,7 @@
+ MakeExe noncontig
+ \rm -f $FILENAME*
+ echo '**** Testing noncontig.c ****'
+-$mpirun -np 2 ./noncontig -fname $FILENAME
++$mpirun -np 2 $testsdir/noncontig -fname $FILENAME
+ # CheckOutput noncontig
+ CleanExe noncontig
+ #
+@@ -287,7 +288,7 @@
+ MakeExe noncontig_coll
+ \rm -f $FILENAME*
+ echo '**** Testing noncontig_coll.c ****'
+-$mpirun -np 2 ./noncontig_coll -fname $FILENAME
++$mpirun -np 2 $testsdir/noncontig_coll -fname $FILENAME
+ # CheckOutput noncontig_coll
+ CleanExe noncontig_coll
+ #
+@@ -297,30 +298,30 @@
+ MakeExe noncontig_coll2
+ \rm -f $FILENAME*
+ echo '**** Testing noncontig_coll2.c ****'
+-$mpirun -np 4 ./noncontig_coll2 -fname $FILENAME
++$mpirun -np 4 $testsdir/noncontig_coll2 -fname $FILENAME
+ # CheckOutput noncontig_coll2
+ CleanExe noncontig_coll2
+ MakeExe aggregation1
+ echo '**** Testing aggregation1 ****'
+-$mpirun -np 4 ./aggregation1 -h -f $FILENAME
++$mpirun -np 4 $testsdir/aggregation1 -h -f $FILENAME
+ # CheckOutput aggregation1
+ CleanExe aggregation1
+ MakeExe aggregation2
+ echo '**** Testing aggregation2 ****'
+-$mpirun -np 4 ./aggregation2 $FILENAME
++$mpirun -np 4 $testsdir/aggregation2 $FILENAME
+ # CheckOutput aggregation2
+ CleanExe aggregation2
+ MakeExe hindexed
+ echo '**** Testing hindexed ****'
+-$mpirun -np 4 ./hindexed $FILENAME
++$mpirun -np 4 $testsdir/hindexed $FILENAME
+ # CheckOutput hindexed
+ CleanExe hindexed
+ #
+ #echo '**** Testing write_all_test (run 1)****'
+-#$mpirun -np 4 ./write_all_test -nzp 2 -zplace 2 -nzw 2 -naw 2 -size 100 \
++#$mpirun -np 4 $testsdir/write_all_test -nzp 2 -zplace 2 -nzw 2 -naw 2 -size 100 \
+ #	-offm 8 -hints romio_cb_write enable -fname $FILENAME
+ #echo '**** Testing write_all_test (run 2)****'
+-#$mpirun -np 4 ./write_all_test -nzp 2 -zplace 2 -nzw 2 -naw 2 -size 100 \
++#$mpirun -np 4 $testsdir/write_all_test -nzp 2 -zplace 2 -nzw 2 -naw 2 -size 100 \
+ #	-offm 4 -hints romio_cb_write enable -fname $FILENAME
+ #CleanExe write_all_test
+ OutTime
+@@ -330,7 +331,7 @@
+ 	MakeExe misc
+ 	\rm -f $FILENAME*
+ 	echo '**** Testing misc.c ****'
+-	$mpirun -np 4 ./misc -fname $FILENAME
++	$mpirun -np 4 $testsdir/misc -fname $FILENAME
+ 	# CheckOutput misc
+ 	CleanExe misc
+ 	#
+@@ -342,7 +343,7 @@
+ 	MakeExe shared_fp
+ 	\rm -f $FILENAME*
+ 	echo '**** Testing shared_fp.c ****'
+-	$mpirun -np 4 ./shared_fp -fname $FILENAME
++	$mpirun -np 4 $testsdir/shared_fp -fname $FILENAME
+ 	# CheckOutput shared_fp
+ 	CleanExe shared_fp
+ 	#
+@@ -352,7 +353,7 @@
+ 	MakeExe ordered_fp
+ 	\rm -f $FILENAME*
+ 	echo '**** Testing ordered_fp.c ****'
+-	$mpirun -np 4 ./ordered_fp -fname $FILENAME
++	$mpirun -np 4 $testsdir/ordered_fp -fname $FILENAME
+ 	CleanExe ordered_fp
+ 	#
+ 	OutTime
+@@ -362,7 +363,7 @@
+ MakeExe split_coll
+ \rm -f $FILENAME*
+ echo '**** Testing split_coll.c ****'
+-$mpirun -np 4 ./split_coll -fname $FILENAME
++$mpirun -np 4 $testsdir/split_coll -fname $FILENAME
+ # CheckOutput split_coll
+ CleanExe split_coll
+ #
+@@ -372,7 +373,7 @@
+ MakeExe psimple
+ \rm -f $FILENAME*
+ echo '**** Testing psimple.c ****'
+-$mpirun -np 4 ./psimple -fname $FILENAME
++$mpirun -np 4 $testsdir/psimple -fname $FILENAME
+ # CheckOutput psimple
+ CleanExe psimple
+ #
+@@ -382,7 +383,7 @@
+ MakeExe error
+ \rm -f $FILENAME*
+ echo '**** Testing error.c ****'
+-$mpirun -np 1 ./error -fname $FILENAME
++$mpirun -np 1 $testsdir/error -fname $FILENAME
+ # CheckOutput error
+ CleanExe error
+ #
+@@ -393,7 +394,7 @@
+ \rm -f $FILENAME*
+ echo '**** Testing status.c ****'
+ # Some systems have a status program.
+-$mpirun -np 1 ./status -fname $FILENAME
++$mpirun -np 1 $testsdir/status -fname $FILENAME
+ # CheckOutput status
+ CleanExe status
+ testfiles="$testfiles types_with_zeros.out"
+@@ -401,18 +402,18 @@
+ MakeExe types_with_zeros
+ \rm -f $FILENAME*
+ echo '**** Testing types_with_zeros ****'
+-$mpirun -np 2 ./types_with_zeros $FILENAME
++$mpirun -np 2 $testsdir/types_with_zeros $FILENAME
+ CleanExe types_with_zeros
+ testfiles="$testfiles darray_read.out"
+ \rm -f darray_read.out
+ MakeExe darray_read
+ \rm -f $FILENAME*
+ echo '**** Testing darray_read ****'
+-$mpirun -np 4 ./darray_read $FILENAME
++$mpirun -np 4 $testsdir/darray_read $FILENAME
+ CleanExe darray_read
+ MakeExe syshints
+ echo '**** Testing syshints ****'
+-$mpirun -np 1 ./syshints $srcdir/test_hintfile
++$mpirun -np 1 $testsdir/syshints $testsdir/test_hintfile
+ CleanExe syshints
+ 
+ #
+@@ -426,7 +427,7 @@
+ 	    MakeExe fmisc
+ 	    \rm -f $FILENAME*
+ 	    echo '**** Testing fmisc.f ****'
+-	    $mpirun -np 4 ./fmisc -fname $FILENAME
++	    $mpirun -np 4 $testsdir/fmisc -fname $FILENAME
+ 	    # CheckOutput fmisc
+ 	    CleanExe fmisc
+ 	    #
+@@ -437,7 +438,7 @@
+     MakeExe fcoll_test
+     \rm -f $FILENAME*
+     echo '**** Testing fcoll_test.f ****'
+-    $mpirun -np 4 ./fcoll_test -fname $FILENAME
++    $mpirun -np 4 $testsdir/fcoll_test -fname $FILENAME
+     # CheckOutput fcoll_test
+     CleanExe fcoll_test
+ #
+@@ -447,7 +448,7 @@
+     MakeExe pfcoll_test
+     \rm -f $FILENAME*
+     echo '**** Testing pfcoll_test.f ****'
+-    $mpirun -np 4 ./pfcoll_test -fname $FILENAME
++    $mpirun -np 4 $testsdir/pfcoll_test -fname $FILENAME
+     # CheckOutput pfcoll_test
+     CleanExe pfcoll_test
+ #
+@@ -456,7 +457,7 @@
+ #
+ else
+     # Just run checks
+-    testfiles=`echo *.out`
++    testfiles=$(echo *.out)
+     if test "$testfiles" = "*.out" ; then
+ 	echo "No output files remain from previous test!"
+ 	exit 1
+@@ -465,7 +466,7 @@
+ 
+ if [ $daos_pool = 1 ] ; then
+ echo '**** Destroying DAOS Pool ****'
+-pool=`mpirun -np 1 dmg_old destroy --force --pool=${array[0]}`
++pool=$($mpirun -np 1 dmg_old destroy --force --pool=${array[0]})
+ fi
+ 
+ #
+@@ -473,14 +474,14 @@
+ # rm -f iotests.diff
+ # nodiff=1
+ # for file in $testfiles ; do
+-#     stdfile="${srcdir}/std/`basename $file .out`.std"
++#     stdfile="${srcdir}/std/$(basename $file .out).std"
+ #     # if basename is sendrecv or isndrcv, then we may want to test 
+ #     # with .std2 as well.  We should really separate out the long double
+ #     # tests ...
+ #     if [ -s $stdfile ] ; then
+ # 	stdfile2=${stdfile}2
+ #         # Handle Fortran systems that generate stop statements
+-# 	bfile="`basename $file .out`.tout"
++# 	bfile="$(basename $file .out).tout"
+ #         rm -f ${bfile}
+ # 	grep -v 'FORTRAN STOP' ${file} > ${bfile}
+ #         if diff -b $bfile $stdfile > /dev/null ; then
+@@ -490,18 +491,18 @@
+ # 	    if diff -b $bfile $stdfile2 > /dev/null ; then
+ # 	        true
+ #             else
+-# 	        echo "Differences in `basename $file .out`" >> iotests.diff
++# 	        echo "Differences in $(basename $file .out)" >> iotests.diff
+ # 	        diff -b $bfile $stdfile >> iotests.diff
+ # 	        nodiff=0
+ # 	    fi
+ #         else
+-# 	    echo "Differences in `basename $file .out`" >> iotests.diff
++# 	    echo "Differences in $(basename $file .out)" >> iotests.diff
+ # 	    diff -b $bfile $stdfile >> iotests.diff
+ # 	    nodiff=0
+ # 	fi
+ #         rm -f ${bfile}
+ #     else
+-#         echo "Can not find file $stdfile to compare against for test `basename $file .out`"
++#         echo "Can not find file $stdfile to compare against for test $(basename $file .out)"
+ # 	nodiff=0
+ #     fi
+ # done
