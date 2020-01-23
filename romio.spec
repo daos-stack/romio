@@ -4,17 +4,36 @@
 
 Name:       romio
 Version:    3.3
-Release:    2%{?dist}
+Release:    3%{?dist}
 Summary:    ROMIO
 
 License:    MIT
 URL:        http://www.mpich.org/
-Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/daos_adio-rpm/lastSuccessfulBuild/artifact/artifacts/%{name}-%{version}.tar.gz
-Patch0:     packaged-runtests.patch
+
+%{!?chroot_name: %define chroot_name %{getenv:CHROOT_NAME}}
+
+%if ("%{?chroot_name}" == "epel-7-x86_64")
+%define distro centos7
+%else
+%if ("%{?chroot_name}" == "opensuse-leap-15.1-x86_64")
+%define distro leap15
+%else
+%if (0%{?suse_version} >= 1500) && (0%{?suse_version} < 1600)
+%define distro leap15
+%else
+%define distro centos7
+%endif
+%endif
+%endif
+Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/daos_adio-rpm/lastSuccessfulBuild/artifact/artifacts/%{distro}/%{name}-%{version}.tar.gz
+Patch0:     packaged-runtests-%{distro}.patch
 
 BuildRequires:  mpich-devel
 # this should be BR:ed by mpich-devel above
 BuildRequires:  daos-devel
+%if (0%{?suse_version} >= 1500)
+BuildRequires:  gcc-fortran
+%endif
 Provides:       %{name}-cart-%{cart_major}-daos-%{daos_major}
 
 %description
@@ -56,6 +75,9 @@ done
 %license
 
 %changelog
+* Tue Jan 21 2020 Brian J. Murrell <brian.murrell@intel.com> - 3.3-3
+- Add Leap 15.1 support
+
 * Sun Dec 29 2019 Brian J. Murrell <brian.murrell@intel.com> - 3.3-2
 - Add Provides: %{name}-cart-%{cart_major}-daos-%{daos_major}
 

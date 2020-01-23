@@ -40,7 +40,4 @@
 // I.e. for testing library changes
 //@Library(value="pipeline-lib@your_branch") _
 
-// Needs porting to Leap 15
-// - need a romio tarball for each distro, not a single common one
-//   because the mpicc path is buried in the tarball Makefiles
-packageBuildingPipeline(['distros' : ['centos7']])
+packageBuildingPipeline(['distros' : ['centos7', 'leap15']])
