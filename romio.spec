@@ -25,7 +25,7 @@ URL:        http://www.mpich.org/
 %endif
 %endif
 %endif
-Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/PR-24/lastSuccessfulBuild/artifact/artifacts/%{distro}/%{name}-%{version}.tar.gz
+Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/daos_adio-rpm/lastSuccessfulBuild/artifact/artifacts/%{distro}/%{name}-%{version}.tar.gz
 Patch0:     packaged-runtests-%{distro}.patch
 
 BuildRequires:  mpich-devel
