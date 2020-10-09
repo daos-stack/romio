@@ -1,5 +1,6 @@
-NAME      := romio
-SRC_EXT   := gz
+NAME          := romio
+SRC_EXT       := gz
+TEST_PACKAGES := $(NAME)-tests
 
 include packaging/Makefile_packaging.mk
 
@@ -7,6 +8,3 @@ include packaging/Makefile_packaging.mk
 # distro specific
 romio-3.3.tar.gz: FORCE
 $(SRPM): FORCE
-
-debug:
-	echo $(SRPM)
