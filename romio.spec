@@ -14,7 +14,7 @@ URL:        http://www.mpich.org/
 %if ("%{?chroot_name}" == "epel-7-x86_64")
 %define distro centos7
 %else
-%if ("%{?chroot_name}" == "opensuse-leap-15.1-x86_64")
+%if ("%{?chroot_name}" == "opensuse-leap-15.2-x86_64")
 %define distro leap15
 %else
 %if (0%{?suse_version} >= 1500) && (0%{?suse_version} < 1600)
