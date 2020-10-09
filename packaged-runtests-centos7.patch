@@ -18,7 +18,7 @@
  	;;
  	-echo)
 @@ -52,7 +53,7 @@
- 	daos_pool=1
+	subset_only=1
  	;;
  	-fname=*)
 -	FILENAME=`echo $arg|sed 's/-*fname=//'`
@@ -47,7 +47,7 @@
  	echo "$hostname : $d"
      fi
  }
-@@ -156,20 +157,20 @@
+@@ -156,13 +157,13 @@
        MakeExe simple
        rm -rf $FILENAME*
        echo "**** Testing ${1}.c ****"
@@ -63,23 +63,6 @@
      $MAKE default
  fi
  #
- 
- if [ $daos_pool = 1 ] ; then
- echo '**** Creating DAOS Pool ****'
--pool=`dmg_old create --size=1GB`
-+pool=$(dmg_old create --size=1GB)
- value=$pool
- echo $value
- OLDIFS=$IFS
-@@ -178,7 +179,7 @@
- IFS=$OLDIFS
- export DAOS_POOL=${array[0]}
- export DAOS_SVCL=${array[1]}
--export DAOS_CONT=`uuidgen`
-+export DAOS_CONT=$(uuidgen)
- echo '**** Creating DAOS Container ****'
- daos cont create --pool=$DAOS_POOL --svc=$DAOS_SVCL --cont=$DAOS_CONT --type=POSIX
- fi
 @@ -193,7 +194,7 @@
  MakeExe simple
  \rm -f $FILENAME*
@@ -328,15 +311,6 @@
      if test "$testfiles" = "*.out" ; then
  	echo "No output files remain from previous test!"
  	exit 1
-@@ -465,7 +466,7 @@
- 
- if [ $daos_pool = 1 ] ; then
- echo '**** Destroying DAOS Pool ****'
--pool=`mpirun -np 1 dmg_old destroy --force --pool=${array[0]}`
-+pool=$($mpirun -np 1 dmg_old destroy --force --pool=${array[0]})
- fi
- 
- #
 @@ -473,14 +474,14 @@
  # rm -f iotests.diff
  # nodiff=1
