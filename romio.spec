@@ -2,8 +2,8 @@
 %global daos_major 1
 
 Name:       romio
-Version:    3.3
-Release:    4%{?dist}
+Version:    3.4~a2
+Release:    1%{?dist}
 Summary:    ROMIO
 
 License:    MIT
@@ -72,8 +72,9 @@ done
 %license
 
 %changelog
-* Thu Oct 08 2020 Brian J. Murrell <brian.murrell@intel.com> - 3.3-4
-- Remove BR: daos-devel as mpich-devel now R:s it
+* Thu Oct 08 2020 Brian J. Murrell <brian.murrell@intel.com> - 3.4~a2-1
+- Update to 3.4~a2
+- Remove BR: daos-devel as mpich-devel now Requires: it
 
 * Tue Jan 21 2020 Brian J. Murrell <brian.murrell@intel.com> - 3.3-3
 - Add Leap 15.1 support

@@ -7,6 +7,3 @@ include packaging/Makefile_packaging.mk
 # distro specific
 romio-3.3.tar.gz: FORCE
 $(SRPM): FORCE
-
-debug:
-	echo $(SRPM)
