@@ -1,10 +1,9 @@
 %global romio_home %{_libdir}/romio
-%global cart_major 4
-%global daos_major 0
+%global daos_major 1
 
 Name:       romio
 Version:    3.3
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    ROMIO
 
 License:    MIT
@@ -29,19 +28,17 @@ Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/daos_adio-
 Patch0:     packaged-runtests-%{distro}.patch
 
 BuildRequires:  mpich-devel
-# this should be BR:ed by mpich-devel above
-BuildRequires:  daos-devel
 %if (0%{?suse_version} >= 1500)
 BuildRequires:  gcc-fortran
 %endif
-Provides:       %{name}-cart-%{cart_major}-daos-%{daos_major}
+Provides:       %{name}-daos-%{daos_major}
 
 %description
 ROMIO
 
 %package tests
 Summary:    ROMIO tests
-Provides:       %{name}-tests-cart-%{cart_major}-daos-%{daos_major}
+Provides:       %{name}-tests-daos-%{daos_major}
 
 %description tests
 ROMIO tests
@@ -75,6 +72,9 @@ done
 %license
 
 %changelog
+* Thu Oct 08 2020 Brian J. Murrell <brian.murrell@intel.com> - 3.3-4
+- Remove BR: daos-devel as mpich-devel now R:s it
+
 * Tue Jan 21 2020 Brian J. Murrell <brian.murrell@intel.com> - 3.3-3
 - Add Leap 15.1 support
 
