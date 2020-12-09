@@ -1,5 +1,6 @@
-NAME      := romio
-SRC_EXT   := gz
+NAME             := romio
+SRC_EXT          := gz
+TEST_PACKAGES    := romio-tests
 
 include packaging/Makefile_packaging.mk
 
