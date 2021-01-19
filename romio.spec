@@ -3,7 +3,7 @@
 
 Name:       romio
 Version:    3.4~a2
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    ROMIO
 
 License:    MIT
@@ -24,7 +24,7 @@ URL:        http://www.mpich.org/
 %endif
 %endif
 %endif
-Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/PR-44/lastSuccessfulBuild/artifact/artifacts/%{distro}/%{name}-%{version}.tar.gz
+Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/daos_adio-rpm/lastSuccessfulBuild/artifact/artifacts/%{distro}/%{name}-%{version}.tar.gz
 Patch0:     packaged-runtests-%{distro}.patch
 
 BuildRequires:  mpich-devel
@@ -74,6 +74,9 @@ done
 %license
 
 %changelog
+* Tue Jan 19 2021 Kenneth Cain <kenneth.c.cain@intel.com> - 3.4~a2-2
+- Undo temporary Source URL setting from version 3.4~a2-1
+
 * Tue Dec 08 2020 Kenneth Cain <kenneth.c.cain@intel.com> - 3.4~a2-1
 - Update packaging to build with libdaos.so.1
 
