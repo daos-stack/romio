@@ -1,10 +1,9 @@
 %global romio_home %{_libdir}/romio
-%global cart_major 4
-%global daos_major 0
+%global daos_major 1
 
 Name:       romio
-Version:    3.3
-Release:    3%{?dist}
+Version:    3.4~a2
+Release:    2%{?dist}
 Summary:    ROMIO
 
 License:    MIT
@@ -15,7 +14,7 @@ URL:        http://www.mpich.org/
 %if ("%{?chroot_name}" == "epel-7-x86_64")
 %define distro centos7
 %else
-%if ("%{?chroot_name}" == "opensuse-leap-15.1-x86_64")
+%if "%{?chroot_name}" == "opensuse-leap-15.1-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.2-x86_64"
 %define distro leap15
 %else
 %if (0%{?suse_version} >= 1500) && (0%{?suse_version} < 1600)
@@ -34,14 +33,14 @@ BuildRequires:  daos-devel
 %if (0%{?suse_version} >= 1500)
 BuildRequires:  gcc-fortran
 %endif
-Provides:       %{name}-cart-%{cart_major}-daos-%{daos_major}
+Provides:       %{name}-daos-%{daos_major}
 
 %description
 ROMIO
 
 %package tests
 Summary:    ROMIO tests
-Provides:       %{name}-tests-cart-%{cart_major}-daos-%{daos_major}
+Provides:       %{name}-tests-daos-%{daos_major}
 
 %description tests
 ROMIO tests
@@ -75,6 +74,12 @@ done
 %license
 
 %changelog
+* Tue Jan 19 2021 Kenneth Cain <kenneth.c.cain@intel.com> - 3.4~a2-2
+- Undo temporary Source URL setting from version 3.4~a2-1
+
+* Tue Dec 08 2020 Kenneth Cain <kenneth.c.cain@intel.com> - 3.4~a2-1
+- Update packaging to build with libdaos.so.1
+
 * Tue Jan 21 2020 Brian J. Murrell <brian.murrell@intel.com> - 3.3-3
 - Add Leap 15.1 support
 
