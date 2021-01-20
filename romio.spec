@@ -74,7 +74,7 @@ done
 %license
 
 %changelog
-* Tue Dec 08 2020 Kenneth Cain <kenneth.c.cain@intel.com> - 3.4~a2-1
+* Wed Jan 20 2021 Kenneth Cain <kenneth.c.cain@intel.com> - 3.4~a2-1
 - Update packaging to build with libdaos.so.1
 
 * Tue Jan 21 2020 Brian J. Murrell <brian.murrell@intel.com> - 3.3-3
