@@ -1,6 +1,6 @@
---- a/test/runtests	2019-12-12 17:06:15.443041123 -0500
-+++ b/test/runtests	2019-12-12 16:05:49.079353484 -0500
-@@ -2,6 +2,7 @@
+--- a/test/runtests	2020-12-16 10:12:27.093075638 -0500
++++ b/test/runtests	2020-12-16 10:15:04.924143621 -0500
+@@ -7,6 +7,7 @@
  prefix=/usr
  exec_prefix=/usr
  bindir=/usr/lib64/mpich/bin
@@ -8,7 +8,7 @@
  mpirun="${bindir}/mpiexec"
  STOPFILE=${MPITEST_STOPTEST:-"$HOME/.stopmpichtests"}
  #
-@@ -25,7 +26,7 @@
+@@ -29,7 +30,7 @@
  	;;
          -margs=*)
  	shift
@@ -18,7 +18,7 @@
  	;;
  	-echo)
 @@ -52,7 +53,7 @@
- 	daos_pool=1
+ 	subset_only=1
  	;;
  	-fname=*)
 -	FILENAME=`echo $arg|sed 's/-*fname=//'`
@@ -26,7 +26,7 @@
  	;;
  	-atend)
  	shift
-@@ -89,7 +90,7 @@
+@@ -87,7 +88,7 @@
          echo "Found stopfile; exiting"
          exit 0
      fi
@@ -35,7 +35,7 @@
  	$MAKE $1
          if [ ! -x $1 ] ; then 
  	    echo "Could not build executable $1; aborting tests"
-@@ -107,9 +108,9 @@
+@@ -105,9 +106,9 @@
  OutTime() {
      if [ $quiet = 0 ] ; then
  	if [ -z "$hostname" ] ; then
@@ -47,7 +47,7 @@
  	echo "$hostname : $d"
      fi
  }
-@@ -156,20 +157,20 @@
+@@ -154,13 +155,13 @@
        MakeExe simple
        rm -rf $FILENAME*
        echo "**** Testing ${1}.c ****"
@@ -63,24 +63,7 @@
      $MAKE default
  fi
  #
- 
- if [ $daos_pool = 1 ] ; then
- echo '**** Creating DAOS Pool ****'
--pool=`dmg_old create --size=1GB`
-+pool=$(dmg_old create --size=1GB)
- value=$pool
- echo $value
- OLDIFS=$IFS
-@@ -178,7 +179,7 @@
- IFS=$OLDIFS
- export DAOS_POOL=${array[0]}
- export DAOS_SVCL=${array[1]}
--export DAOS_CONT=`uuidgen`
-+export DAOS_CONT=$(uuidgen)
- echo '**** Creating DAOS Container ****'
- daos cont create --pool=$DAOS_POOL --svc=$DAOS_SVCL --cont=$DAOS_CONT --type=POSIX
- fi
-@@ -193,7 +194,7 @@
+@@ -175,7 +176,7 @@
  MakeExe simple
  \rm -f $FILENAME*
  echo '**** Testing simple.c ****'
@@ -89,7 +72,7 @@
  # CheckOutput simple
  CleanExe simple
  #
-@@ -203,7 +204,7 @@
+@@ -185,7 +186,7 @@
  MakeExe async
  \rm -f $FILENAME*
  echo '**** Testing async.c ****'
@@ -98,7 +81,7 @@
  # CheckOutput async
  CleanExe async
  #
-@@ -213,7 +214,7 @@
+@@ -195,7 +196,7 @@
  MakeExe async-multiple
  \rm -f $FILENAME*
  echo '**** Testing async-multiple.c ****'
@@ -107,7 +90,7 @@
  # CheckOutput async-multiple
  CleanExe async-multiple
  #
-@@ -226,7 +227,7 @@
+@@ -208,7 +209,7 @@
  	echo '**** Testing atomicity.c ****'
  	# Atomicity test recommends at least 8 processes (separate processors 
  	# even better)
@@ -116,7 +99,7 @@
  	# CheckOutput atomicity
  	CleanExe atomicity
  	#
-@@ -237,7 +238,7 @@
+@@ -219,7 +220,7 @@
  MakeExe coll_test
  \rm -f $FILENAME*
  echo '**** Testing coll_test.c ****'
@@ -125,7 +108,7 @@
  # CheckOutput coll_test
  CleanExe coll_test
  #
-@@ -247,7 +248,7 @@
+@@ -229,7 +230,7 @@
  MakeExe excl
  \rm -f $FILENAME*
  echo '**** Testing excl.c ****'
@@ -134,7 +117,7 @@
  # CheckOutput excl
  CleanExe excl
  #
-@@ -257,7 +258,7 @@
+@@ -239,7 +240,7 @@
  MakeExe file_info
  \rm -f $FILENAME*
  echo '**** Testing file_info.c ****'
@@ -143,7 +126,7 @@
  # CheckOutput file_info
  CleanExe file_info
  #
-@@ -267,7 +268,7 @@
+@@ -249,7 +250,7 @@
  MakeExe i_noncontig
  \rm -f $FILENAME*
  echo '**** Testing i_noncontig.c ****'
@@ -152,7 +135,7 @@
  # CheckOutput i_noncontig
  CleanExe i_noncontig
  #
-@@ -277,7 +278,7 @@
+@@ -259,7 +260,7 @@
  MakeExe noncontig
  \rm -f $FILENAME*
  echo '**** Testing noncontig.c ****'
@@ -161,7 +144,7 @@
  # CheckOutput noncontig
  CleanExe noncontig
  #
-@@ -287,7 +288,7 @@
+@@ -269,7 +270,7 @@
  MakeExe noncontig_coll
  \rm -f $FILENAME*
  echo '**** Testing noncontig_coll.c ****'
@@ -170,7 +153,7 @@
  # CheckOutput noncontig_coll
  CleanExe noncontig_coll
  #
-@@ -297,30 +298,30 @@
+@@ -279,30 +280,30 @@
  MakeExe noncontig_coll2
  \rm -f $FILENAME*
  echo '**** Testing noncontig_coll2.c ****'
@@ -207,7 +190,7 @@
  #	-offm 4 -hints romio_cb_write enable -fname $FILENAME
  #CleanExe write_all_test
  OutTime
-@@ -330,7 +331,7 @@
+@@ -312,7 +313,7 @@
  	MakeExe misc
  	\rm -f $FILENAME*
  	echo '**** Testing misc.c ****'
@@ -216,7 +199,7 @@
  	# CheckOutput misc
  	CleanExe misc
  	#
-@@ -342,7 +343,7 @@
+@@ -324,7 +325,7 @@
  	MakeExe shared_fp
  	\rm -f $FILENAME*
  	echo '**** Testing shared_fp.c ****'
@@ -225,7 +208,7 @@
  	# CheckOutput shared_fp
  	CleanExe shared_fp
  	#
-@@ -352,7 +353,7 @@
+@@ -334,7 +335,7 @@
  	MakeExe ordered_fp
  	\rm -f $FILENAME*
  	echo '**** Testing ordered_fp.c ****'
@@ -234,7 +217,7 @@
  	CleanExe ordered_fp
  	#
  	OutTime
-@@ -362,7 +363,7 @@
+@@ -344,7 +345,7 @@
  MakeExe split_coll
  \rm -f $FILENAME*
  echo '**** Testing split_coll.c ****'
@@ -243,7 +226,7 @@
  # CheckOutput split_coll
  CleanExe split_coll
  #
-@@ -372,7 +373,7 @@
+@@ -354,7 +355,7 @@
  MakeExe psimple
  \rm -f $FILENAME*
  echo '**** Testing psimple.c ****'
@@ -252,7 +235,7 @@
  # CheckOutput psimple
  CleanExe psimple
  #
-@@ -382,7 +383,7 @@
+@@ -364,7 +365,7 @@
  MakeExe error
  \rm -f $FILENAME*
  echo '**** Testing error.c ****'
@@ -261,7 +244,7 @@
  # CheckOutput error
  CleanExe error
  #
-@@ -393,7 +394,7 @@
+@@ -375,7 +376,7 @@
  \rm -f $FILENAME*
  echo '**** Testing status.c ****'
  # Some systems have a status program.
@@ -270,7 +253,7 @@
  # CheckOutput status
  CleanExe status
  testfiles="$testfiles types_with_zeros.out"
-@@ -401,18 +402,18 @@
+@@ -383,18 +384,18 @@
  MakeExe types_with_zeros
  \rm -f $FILENAME*
  echo '**** Testing types_with_zeros ****'
@@ -292,7 +275,7 @@
  CleanExe syshints
  
  #
-@@ -426,7 +427,7 @@
+@@ -408,7 +409,7 @@
  	    MakeExe fmisc
  	    \rm -f $FILENAME*
  	    echo '**** Testing fmisc.f ****'
@@ -301,7 +284,7 @@
  	    # CheckOutput fmisc
  	    CleanExe fmisc
  	    #
-@@ -437,7 +438,7 @@
+@@ -419,7 +420,7 @@
      MakeExe fcoll_test
      \rm -f $FILENAME*
      echo '**** Testing fcoll_test.f ****'
@@ -310,7 +293,7 @@
      # CheckOutput fcoll_test
      CleanExe fcoll_test
  #
-@@ -447,7 +448,7 @@
+@@ -429,7 +430,7 @@
      MakeExe pfcoll_test
      \rm -f $FILENAME*
      echo '**** Testing pfcoll_test.f ****'
@@ -319,7 +302,7 @@
      # CheckOutput pfcoll_test
      CleanExe pfcoll_test
  #
-@@ -456,7 +457,7 @@
+@@ -438,7 +439,7 @@
  #
  else
      # Just run checks
@@ -328,16 +311,7 @@
      if test "$testfiles" = "*.out" ; then
  	echo "No output files remain from previous test!"
  	exit 1
-@@ -465,7 +466,7 @@
- 
- if [ $daos_pool = 1 ] ; then
- echo '**** Destroying DAOS Pool ****'
--pool=`mpirun -np 1 dmg_old destroy --force --pool=${array[0]}`
-+pool=$($mpirun -np 1 dmg_old destroy --force --pool=${array[0]})
- fi
- 
- #
-@@ -473,14 +474,14 @@
+@@ -450,14 +451,14 @@
  # rm -f iotests.diff
  # nodiff=1
  # for file in $testfiles ; do
@@ -354,7 +328,7 @@
  #         rm -f ${bfile}
  # 	grep -v 'FORTRAN STOP' ${file} > ${bfile}
  #         if diff -b $bfile $stdfile > /dev/null ; then
-@@ -490,18 +491,18 @@
+@@ -467,18 +468,18 @@
  # 	    if diff -b $bfile $stdfile2 > /dev/null ; then
  # 	        true
  #             else
