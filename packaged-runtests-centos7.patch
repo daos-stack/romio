@@ -1,9 +1,15 @@
 --- a/test/runtests	2020-12-16 10:12:27.093075638 -0500
 +++ b/test/runtests	2020-12-16 10:15:04.924143621 -0500
-@@ -7,6 +7,7 @@
- prefix=/usr/lib64/mpich
- exec_prefix=/usr/lib64/mpich
- bindir=/usr/lib64/mpich/bin
+@@ -7,9 +7,10 @@
+ ##     See COPYRIGHT in top-level directory
+ ##
+ 
+-prefix=/usr
+-exec_prefix=/usr
+-bindir=/usr/lib64/mpich/bin
++prefix=/usr/lib64/mpich
++exec_prefix=/usr/lib64/mpich
++bindir=/usr/lib64/mpich/bin
 +testsdir=${0%/*}
  mpirun="${bindir}/mpiexec"
  STOPFILE=${MPITEST_STOPTEST:-"$HOME/.stopmpichtests"}
