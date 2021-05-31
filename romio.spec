@@ -1,5 +1,4 @@
 %global romio_home %{_libdir}/romio
-%global daos_major 1
 
 Name:       romio
 Version:    3.4~a2
@@ -27,20 +26,18 @@ URL:        http://www.mpich.org/
 Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/daos_adio-rpm/lastSuccessfulBuild/artifact/artifacts/%{distro}/%{name}-%{version}.tar.gz
 Patch0:     packaged-runtests-%{distro}.patch
 
-BuildRequires:  mpich-devel
+BuildRequires:  mpich-devel >= 3.4~a2-2%{?dist}
 # this should be BR:ed by mpich-devel above
 BuildRequires:  daos-devel
 %if (0%{?suse_version} >= 1500)
 BuildRequires:  gcc-fortran
 %endif
-Provides:       %{name}-daos-%{daos_major}
 
 %description
 ROMIO
 
 %package tests
 Summary:    ROMIO tests
-Provides:       %{name}-tests-daos-%{daos_major}
 
 %description tests
 ROMIO tests
@@ -74,6 +71,9 @@ done
 %license
 
 %changelog
+* Mon May 31 2021 Brian J. Murrell <brian.murrell@intel.com> - 3.4~a2-2
+- Remove the virtual provides
+
 * Wed Jan 20 2021 Kenneth Cain <kenneth.c.cain@intel.com> - 3.4~a2-1
 - Update packaging to build with libdaos.so.1
 
