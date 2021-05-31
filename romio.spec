@@ -32,6 +32,8 @@ Patch0:     packaged-runtests-%{distro}.patch
 BuildRequires:  mpich-devel >= 3.4~a2-2%{?dist}
 # this should be BR:ed by mpich-devel above
 BuildRequires:  daos-devel
+# this really should be Requires: by daos-devel
+BuildRequires:  libuuid-devel
 %if (0%{?suse_version} >= 1500)
 BuildRequires:  gcc-fortran
 %endif
