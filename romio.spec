@@ -2,28 +2,35 @@
 
 Name:       romio
 Version:    3.4~a2
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    ROMIO
 
 License:    MIT
 URL:        http://www.mpich.org/
 
+# upstream_version is version with ~ removed
+%{lua:
+    rpm.define("upstream_version " .. string.gsub(rpm.expand("%{version}"), "~", ""))
+}
+
 %{!?chroot_name: %define chroot_name %{getenv:CHROOT_NAME}}
 
-%if ("%{?chroot_name}" == "epel-7-x86_64")
+%if "%{?chroot_name}" == "epel-8-x86_64" || "%{?rhel}" == "8"
+%define distro centos8
+%else
+%if ("%{?chroot_name}" == "epel-7-x86_64") || "%{?rhel}" == "7"
 %define distro centos7
 %else
-%if "%{?chroot_name}" == "opensuse-leap-15.1-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.2-x86_64"
+%if "%{?chroot_name}" == "opensuse-leap-15.1-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.2-x86_64" || (0%{?suse_version} >= 1500) && (0%{?suse_version} < 1600)
 %define distro leap15
 %else
-%if (0%{?suse_version} >= 1500) && (0%{?suse_version} < 1600)
-%define distro leap15
-%else
-%define distro centos7
+%{error: Don't know which distro to build on}
 %endif
 %endif
 %endif
-Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/daos_adio-rpm/lastSuccessfulBuild/artifact/artifacts/%{distro}/%{name}-%{version}.tar.gz
+# TODO: need to figure out a way to get this from the Makefile
+#Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/daos_adio-rpm/lastSuccessfulBuild/artifact/artifacts/%{distro}/%{name}-%{upstream_version}.tar.gz
+Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/view/change-requests/job/PR-47/lastSuccessfulBuild/artifact/artifacts/%{distro}/%{name}-%{upstream_version}.tar.gz
 Patch0:     packaged-runtests-%{distro}.patch
 
 BuildRequires:  mpich-devel >= 3.4~a2-2%{?dist}
@@ -72,6 +79,7 @@ done
 
 %changelog
 * Mon May 31 2021 Brian J. Murrell <brian.murrell@intel.com> - 3.4~a2-2
+- Build on EL8
 - Remove the virtual provides
 
 * Wed Jan 20 2021 Kenneth Cain <kenneth.c.cain@intel.com> - 3.4~a2-1
