@@ -60,7 +60,9 @@ make %{?_smp_mflags}
 %install
 cd test
 %make_install
-mkdir -p %{buildroot}%{romio_home}/test
+mkdir -p %{buildroot}%{romio_home}/test %{buildroot}%{_libdir}/romio
+# create compatibility link
+ln -s ../mpich/romio/test %{buildroot}/%{_libdir}/romio/test
 for p in runtests simple perf async coll_test coll_perf misc file_info excl    \
          large_array atomicity noncontig noncontig_coll i_noncontig split_coll \
          shared_fp large_file psimple status error noncontig_coll2             \
@@ -72,6 +74,7 @@ done
 
 %files tests
 %{romio_home}
+%{_libdir}/romio
 %doc
 %license
 
@@ -80,6 +83,7 @@ done
 - Build on EL8
 - Remove the virtual provides
 - Install under mpich prefix
+- Create compatibility link
 
 * Wed Jan 20 2021 Kenneth Cain <kenneth.c.cain@intel.com> - 3.4~a2-1
 - Update packaging to build with libdaos.so.1
