@@ -1,8 +1,8 @@
 %global romio_home %{_libdir}/mpich/romio
 
 Name:       romio
-Version:    3.4~a2
-Release:    2%{?dist}
+Version:    4.0~a1
+Release:    1%{?dist}
 Summary:    ROMIO
 
 License:    MIT
@@ -18,7 +18,7 @@ URL:        http://www.mpich.org/
 %if "%{?chroot_name}" == "epel-8-x86_64" || "%{?rhel}" == "8"
 %define distro centos8
 %else
-%if "%{?chroot_name}" == "opensuse-leap-15.1-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.2-x86_64" || (0%{?suse_version} >= 1500) && (0%{?suse_version} < 1600)
+%if "%{?chroot_name}" == "opensuse-leap-15.1-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.2-x86_64" || (0%{?suse_version} >= 1500 && 0%{?suse_version} < 1600)
 %define distro leap15
 %else
 %define distro centos7
@@ -72,6 +72,27 @@ for p in runtests simple perf async coll_test coll_perf misc file_info excl    \
     install -m 755 $p %{buildroot}%{romio_home}/test
 done
 
+# needed to upgrade a package with a /usr/lib64/romio/test dir to a symlink
+%pretrans tests -p <lua>
+-- Define the path to directory being replaced below.
+-- DO NOT add a trailing slash at the end.
+path = "/usr/lib64/romio"
+st = posix.stat(path)
+if st and st.type == "directory" then
+  status = os.rename(path, path .. ".rpmmoved")
+  if not status then
+    suffix = 0
+    while not status do
+      suffix = suffix + 1
+      status = os.rename(path .. ".rpmmoved", path .. ".rpmmoved." .. suffix)
+    end
+    os.rename(path, path .. ".rpmmoved")
+  end
+end
+
+%post tests
+rm -rf %{_libdir}/romio.rpmmoved
+
 %files tests
 %{romio_home}
 %{_libdir}/romio
@@ -79,11 +100,13 @@ done
 %license
 
 %changelog
-* Mon May 31 2021 Brian J. Murrell <brian.murrell@intel.com> - 3.4~a2-2
+* Mon May 31 2021 Brian J. Murrell <brian.murrell@intel.com> - 4.0~a1-1
 - Build on EL8
 - Remove the virtual provides
 - Install under mpich prefix
 - Create compatibility link
+- Include pretrans scriptlet to handle the replacing of the previous dir
+  with the compatibility symlink
 
 * Wed Jan 20 2021 Kenneth Cain <kenneth.c.cain@intel.com> - 3.4~a2-1
 - Update packaging to build with libdaos.so.1
