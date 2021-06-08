@@ -1,4 +1,9 @@
+%if (0%{?suse_version} >= 1500)
+%global romio_home %{_libdir}/mpi/gcc/mpich/romio
+%else
 %global romio_home %{_libdir}/mpich/romio
+%endif
+
 
 Name:       romio
 Version:    4.0~a1
@@ -62,7 +67,12 @@ cd test
 %make_install
 mkdir -p %{buildroot}%{romio_home}/test %{buildroot}%{_libdir}/romio
 # create compatibility link
+%if (0%{?suse_version} >= 1500)
+ln -s ../mpi/gcc/mpich/romio/test %{buildroot}/%{_libdir}/romio/test
+%else
 ln -s ../mpich/romio/test %{buildroot}/%{_libdir}/romio/test
+%endif
+
 for p in runtests simple perf async coll_test coll_perf misc file_info excl    \
          large_array atomicity noncontig noncontig_coll i_noncontig split_coll \
          shared_fp large_file psimple status error noncontig_coll2             \
@@ -103,8 +113,8 @@ rm -rf %{_libdir}/romio.rpmmoved
 * Mon May 31 2021 Brian J. Murrell <brian.murrell@intel.com> - 4.0~a1-1
 - Build on EL8
 - Remove the virtual provides
-- Install under mpich prefix
-- Create compatibility link
+- Install under proper mpich prefix on all distros
+- Create compatibility links on all distros
 - Include pretrans scriptlet to handle the replacing of the previous dir
   with the compatibility symlink
 
