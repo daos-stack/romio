@@ -29,9 +29,8 @@ URL:        http://www.mpich.org/
 %define distro centos7
 %endif
 %endif
-# TODO: need to figure out a way to get this from the Makefile
-#Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/daos_adio-rpm/lastSuccessfulBuild/artifact/artifacts/%%{distro}/%%{name}-%%{upstream_version}.tar.gz
-Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/view/change-requests/job/PR-47/lastSuccessfulBuild/artifact/artifacts/%{distro}/%{name}-%{upstream_version}.tar.gz
+# TODO: need to figure out a way to get this from the Makefile when a PR-repos: is in use
+Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/daos_adio-rpm/lastSuccessfulBuild/artifact/artifacts/%{distro}/%{name}-%{upstream_version}.tar.gz
 Patch0:     packaged-runtests-%{distro}.patch
 
 BuildRequires:  mpich-devel >= 3.4~a2-2%{?dist}

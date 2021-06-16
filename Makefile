@@ -6,6 +6,6 @@ include packaging/Makefile_packaging.mk
 
 # need to force rebuilding the SRPM because the source tarball is
 # distro specific
-romio-3.4a2.tar.gz: FORCE
+romio-$(DL_VERSION).tar.gz: FORCE
 
 $(SRPM): FORCE
