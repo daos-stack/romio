@@ -6,7 +6,7 @@
 
 
 Name:       romio
-Version:    4.0~a1
+Version:    4.0~a2
 Release:    1%{?dist}
 Summary:    ROMIO
 
@@ -109,6 +109,9 @@ rm -rf %{_libdir}/romio.rpmmoved
 %license
 
 %changelog
+* Fri Nov 12 2021 Wang Shilong <shilong.wang@intel.com> 4.0~a2-1
+- Rebuilt for breaking DAOS API change
+
 * Mon May 31 2021 Brian J. Murrell <brian.murrell@intel.com> - 4.0~a1-1
 - Build on EL8
 - Remove the virtual provides
