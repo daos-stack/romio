@@ -23,13 +23,13 @@ URL:        http://www.mpich.org/
 %if "%{?chroot_name}" == "epel-8-x86_64" || "%{?rhel}" == "8"
 %define distro centos8
 %else
-%if "%{?chroot_name}" == "opensuse-leap-15.1-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.2-x86_64"|| "%{?chroot_name}" == "opensuse-leap-15.2-x86_64" || (0%{?suse_version} >= 1500 && 0%{?suse_version} < 1600)
+%if "%{?chroot_name}" == "opensuse-leap-15.1-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.2-x86_64"|| "%{?chroot_name}" == "opensuse-leap-15.3-x86_64" || (0%{?suse_version} >= 1500 && 0%{?suse_version} < 1600)
 %define distro leap15
 %else
 %if "%{?chroot_name}" == "epel-7-x86_64" || "%{?rhel}" == "7"
 %define distro centos7
 %else
-%{error: Can't build for this distribution}
+%{error: Can't build for this distribution %{distro} %{chroot_name}}
 %endif
 %endif
 %endif
