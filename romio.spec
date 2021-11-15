@@ -29,7 +29,9 @@ URL:        http://www.mpich.org/
 %if "%{?chroot_name}" == "epel-7-x86_64" || "%{?rhel}" == "7"
 %define distro centos7
 %else
-%{error: Can't build for this distribution %{distro} %{chroot_name}}
+# sadly, even %%{echo: } tickles rpmlint
+#%%{echo: Could not determine distribution.  Going to assume EL8 at least for linting.}
+%define distro centos8
 %endif
 %endif
 %endif
@@ -131,7 +133,7 @@ rm -rf %{_libdir}/romio.rpmmoved
 - Add Leap 15.1 support
 
 * Sun Dec 29 2019 Brian J. Murrell <brian.murrell@intel.com> - 3.3-2
-- Add Provides: %{name}-cart-%{cart_major}-daos-%{daos_major}
+- Add Provides: %%{name}-cart-%%{cart_major}-daos-%%{daos_major}
 
 * Tue Sep 03 2019 Brian J. Murrell <brian.murrell@intel.com> - 3.3-1
 - Initial package
