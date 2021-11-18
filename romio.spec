@@ -6,7 +6,7 @@
 
 
 Name:       romio
-Version:    4.0~a1
+Version:    4.0~a2
 Release:    1%{?dist}
 Summary:    ROMIO
 
@@ -23,10 +23,16 @@ URL:        http://www.mpich.org/
 %if "%{?chroot_name}" == "epel-8-x86_64" || "%{?rhel}" == "8"
 %define distro centos8
 %else
-%if "%{?chroot_name}" == "opensuse-leap-15.1-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.2-x86_64" || (0%{?suse_version} >= 1500 && 0%{?suse_version} < 1600)
+%if "%{?chroot_name}" == "opensuse-leap-15.1-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.2-x86_64"|| "%{?chroot_name}" == "opensuse-leap-15.3-x86_64" || (0%{?suse_version} >= 1500 && 0%{?suse_version} < 1600)
 %define distro leap15
 %else
+%if "%{?chroot_name}" == "epel-7-x86_64" || "%{?rhel}" == "7"
 %define distro centos7
+%else
+# sadly, even %%{echo: } tickles rpmlint
+#%%{echo: Could not determine distribution.  Going to assume EL8 at least for linting.}
+%define distro centos8
+%endif
 %endif
 %endif
 # TODO: need to figure out a way to get this from the Makefile when a PR-repos: is in use
@@ -109,6 +115,9 @@ rm -rf %{_libdir}/romio.rpmmoved
 %license
 
 %changelog
+* Fri Nov 12 2021 Wang Shilong <shilong.wang@intel.com> 4.0~a2-1
+- Rebuilt for breaking DAOS API change
+
 * Mon May 31 2021 Brian J. Murrell <brian.murrell@intel.com> - 4.0~a1-1
 - Build on EL8
 - Remove the virtual provides
@@ -124,7 +133,7 @@ rm -rf %{_libdir}/romio.rpmmoved
 - Add Leap 15.1 support
 
 * Sun Dec 29 2019 Brian J. Murrell <brian.murrell@intel.com> - 3.3-2
-- Add Provides: %{name}-cart-%{cart_major}-daos-%{daos_major}
+- Add Provides: %%{name}-cart-%%{cart_major}-daos-%%{daos_major}
 
 * Tue Sep 03 2019 Brian J. Murrell <brian.murrell@intel.com> - 3.3-1
 - Initial package
