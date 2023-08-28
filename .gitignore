@@ -2,3 +2,4 @@ _topdir/
 *.tar.*
 *.code-workspace
 *.sw?
+mock.cfg

@@ -6,7 +6,7 @@
 
 
 Name:       romio
-Version:    4.0~a2
+Version:    4.1~a1
 Release:    1%{?dist}
 Summary:    ROMIO
 
@@ -19,24 +19,26 @@ URL:        http://www.mpich.org/
 }
 
 %{!?chroot_name: %define chroot_name %{getenv:CHROOT_NAME}}
+%{!?buildjob: %define buildjob daos_adio-rpm}
+%{!?buildnum: %define buildnum lastBuild}
 
-%if "%{?chroot_name}" == "epel-8-x86_64" || "%{?rhel}" == "8"
-%define distro centos8
-%else
-%if "%{?chroot_name}" == "opensuse-leap-15.1-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.2-x86_64"|| "%{?chroot_name}" == "opensuse-leap-15.3-x86_64" || (0%{?suse_version} >= 1500 && 0%{?suse_version} < 1600)
+%if "%{?chroot_name}" == "opensuse-leap-15.1-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.2-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.3-x86_64" || "%{?chroot_name}" == "opensuse-leap-15.4-x86_64" || (0%{?suse_version} >= 1500 && 0%{?suse_version} < 1600)
 %define distro leap15
 %else
-%if "%{?chroot_name}" == "epel-7-x86_64" || "%{?rhel}" == "7"
+%if "%{?chroot_name}" == "centos+epel-7-x86_64" ||  "%{?chroot_name}" == "epel-7-x86_64" || "%{?rhel}" == "7"
 %define distro centos7
 %else
+%if "%{?chroot_name}" == "rocky+epel-8-x86_64" ||  "%{?chroot_name}" == "alma+epel-8-x86_64" || "%{?rhel}" == "8"
+%define distro el8
+%else
 # sadly, even %%{echo: } tickles rpmlint
-#%%{echo: Could not determine distribution.  Going to assume EL8 at least for linting.}
-%define distro centos8
+#%%{echo: Could not determine distribution.  Going to assume EL9 at least for linting.}
+%define distro el9
 %endif
 %endif
 %endif
 # TODO: need to figure out a way to get this from the Makefile when a PR-repos: is in use
-Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/daos_adio-rpm/lastSuccessfulBuild/artifact/artifacts/%{distro}/%{name}-%{upstream_version}.tar.gz
+Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/%{buildjob}/%{buildnum}/artifact/artifacts/%{distro}/%{name}-%{upstream_version}.tar.gz
 Patch0:     packaged-runtests-%{distro}.patch
 
 BuildRequires:  mpich-devel >= 3.4~a2-2%{?dist}
@@ -83,9 +85,11 @@ for p in runtests simple perf async coll_test coll_perf misc file_info excl    \
          shared_fp large_file psimple status error noncontig_coll2             \
          aggregation1 aggregation2 async-multiple ordered_fp external32        \
          hindexed types_with_zeros darray_read syshints fperf fcoll_test fmisc \
-         pfcoll_test test_hintfile ; do
+         pfcoll_test; do
     install -m 755 $p %{buildroot}%{romio_home}/test
 done
+install -m 644 test_hintfile %{buildroot}%{romio_home}/test
+
 
 # needed to upgrade a package with a /usr/lib64/romio/test dir to a symlink
 %pretrans tests -p <lua>
@@ -115,6 +119,13 @@ rm -rf %{_libdir}/romio.rpmmoved
 %license
 
 %changelog
+* Mon Jun 05 2023 Brian J. Murrell <brian.murrell@intel.com> - 4.1~a1-1
+- Update to 4.1a1
+- Update support for EL8
+- Add support for EL9
+- Add ability to pull romio tarball from mpich PR
+- Fix shebang for /usr/lib64/mpich/romio/test/test_hintfile
+
 * Fri Nov 12 2021 Wang Shilong <shilong.wang@intel.com> 4.0~a2-1
 - Rebuilt for breaking DAOS API change
 
