@@ -38,7 +38,7 @@ URL:        http://www.mpich.org/
 %endif
 %endif
 # TODO: need to figure out a way to get this from the Makefile when a PR-repos: is in use
-Source0:    https://build.hpdd.intel.com/job/daos-stack/job/mpich/job/%{buildjob}/%{buildnum}/artifact/artifacts/%{distro}/%{name}-%{upstream_version}.tar.gz
+Source0:    https://jenkins-3.daos.hpc.amslabs.hpecorp.net/job/daos-stack/job/mpich/job/%{buildjob}/%{buildnum}/artifact/artifacts/%{distro}/%{name}-%{upstream_version}.tar.gz
 Patch0:     packaged-runtests-%{distro}.patch
 
 BuildRequires:  mpich-devel >= 3.4~a2-2%{?dist}
